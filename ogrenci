@@ -1,0 +1,401 @@
+#include <iostream>
+#include <locale.h>
+#include <string.h>
+#include<conio.h>
+#include<stdlib.h>
+#include<fstream>
+#include<iomanip>
+
+using namespace std;
+
+struct Ogrenci
+{
+	char ad[50];
+	char soyad[50];
+	char ogr_no[10];
+	char cinsiyet;
+
+};
+
+void OgrenciEkle();
+void OgrenciSilme();
+void OgrenciDuzenleme();
+void OgrenciListeleme();
+void OgrenciArama();
+	
+	
+	int main()
+ {
+	setlocale (LC_ALL,"Turkish");
+	char numara;
+	char anamenu;
+	
+
+	
+do	
+	{
+		system("cls");
+	cout<<"|-------------------ANA MENÜ--------------------|"<<endl;
+	cout<<"|                                               |"<<endl;
+	cout<<"|         1-Öğrenci Ekle                        |"<<endl;
+	cout<<"|         2-Öğrenci Sil                         |"<<endl;
+	cout<<"|         3-Öğrenci Ara                         |"<<endl;
+	cout<<"|         4-Öğrenci Bilgilerini Listele         |"<<endl;
+    cout<<"|         5-Öğrenci Bilgilerini Düzenle         |"<<endl;
+    cout<<"|         6-Çıkış                               |"<<endl;
+    cout<<"|                                               |"<<endl;
+    cout<<"|-----------------------------------------------|"<<endl<<endl;
+ 
+    cout<<"Gerçekleştirmek İstediğiniz İşlemin Numarasını Seçiniz :" <<endl;
+    cin>>numara;
+    
+    switch (numara)
+{
+	
+	case '1':
+		OgrenciEkle();
+		
+		break;
+		
+		
+	case '2':
+		OgrenciSilme()	;
+	    break;
+		
+		
+	case '3':
+	OgrenciArama();
+		
+	    break;		
+		
+		
+	case '4':
+		OgrenciListeleme();
+		
+		break;
+		
+		
+	case '5':
+		
+		OgrenciDuzenleme();
+		break;
+		
+		
+	default :
+		
+		cout<<"Çıkış Yaptınız."<<endl;
+		break;
+	
+}
+  
+ cout<<"Ana Menüye Dönmek İster Misiniz ? (e/h)"<<endl;
+ anamenu=getche();
+  cout<<endl<<endl;;
+
+}while (anamenu=='e' || anamenu=='E');
+
+ return 0;
+  }
+ 
+ 
+Ogrenci ogrenci;
+
+
+void OgrenciEkle()
+{
+	ofstream yaz("ogrenci.dat",ios::binary |ios::app);
+	char secim;
+	int adet=0;
+	
+	
+	do
+	{
+			system ("cls");
+		cout<<"Öğrencinin Adını Giriniz : "<<endl,
+	    cin>>ogrenci.ad;
+		cout<<"Öğrencinin Soyadını Giriniz :"<<endl;
+		cin>>ogrenci.soyad;
+		cout<<"Öğrencinin Numarasını Giriniz :"<<endl;
+		cin>>ogrenci.ogr_no;
+		cout<<"Öğrencinin Cinsiyetini Giriniz :"<<endl;
+		cin>>ogrenci.cinsiyet;
+		
+		yaz.write((char*)&ogrenci,sizeof(ogrenci));
+		
+		adet++;
+			cout<<"Öğrenci Başarıyla Eklendi.Yeni Öğrenci Eklemek İster Misiniz ? (e/h)"<<endl;
+			secim=getche();
+			cout<<endl;
+			
+	}while(secim=='e' || secim=='E');
+	
+	
+	cout<<adet<<" Öğrenci Eklendi."<<endl;
+	yaz.close();
+}
+
+
+
+void OgrenciListeleme()
+{
+	ifstream oku("ogrenci.dat",ios::binary | ios::app);
+	oku.seekg(0,ios::end);
+	int kayitsayisi=oku.tellg()/sizeof(ogrenci);
+	cout<<kayitsayisi<<" Öğrenci Bulundu."<<endl;
+	
+	if(kayitsayisi>0)
+	{
+	
+	for(int i=0;i<kayitsayisi;i++)
+	{
+		oku.seekg(i*sizeof(ogrenci));
+		oku.read((char*)&ogrenci,sizeof(ogrenci));
+		
+		cout<<i+1<<" . Öğrencinin Bilgileri"<<endl;
+	cout<<"Öğrenci Adı :"<<ogrenci.ad<<endl;
+	cout<<"Öğrencinin Soyadı :"<<ogrenci.soyad<<endl;
+	cout<<"Öğrencinin Numarası :"<<ogrenci.ogr_no<<endl;
+	if(ogrenci.cinsiyet=='e' || ogrenci.cinsiyet=='E')
+	cout<<"Öğrencinin Cinsiyeti :Erkek"<<endl;
+	
+	else if(ogrenci.cinsiyet=='k' || ogrenci.cinsiyet== 'K')
+	cout<<"Öğrencinin Cinsiyeti :Kadın"<<endl;
+	}
+	
+	}
+	else
+	cout<<"Kayıt Bulunamadı."<<endl;
+	oku.close();
+	
+}
+
+
+void OgrenciArama()
+{
+	
+	ifstream oku(0,ios::binary | ios::app);
+	int kayitsayisi=oku.tellg()/sizeof(ogrenci);
+	cout<<kayitsayisi<<" Kayıtlı Öğrenci Bulundu."<<endl;
+	char ogr_no[10];
+	cout<<"Aramak İstediğiniz Öğrencinin Numarasını Giriniz :"<<endl;
+	cin>>ogr_no;
+	
+	if (kayitsayisi>0)
+	{
+		for(int i=0;i<kayitsayisi;i++)
+		{
+			oku.seekg(i*sizeof(ogrenci));
+			oku.read((char*)&ogrenci,sizeof(ogrenci));
+			 if(strcmp(ogrenci.ogr_no,ogr_no)==0)
+			 {
+			cout<<i+1<<" . Öğrencinin Bilgileri"<<endl;
+        	cout<<"Öğrenci Adı :"<<ogrenci.ad<<endl;
+          	cout<<"Öğrencinin Soyadı :"<<ogrenci.soyad<<endl;
+	        cout<<"Öğrencinin Numarası :"<<ogrenci.ogr_no<<endl;
+        	if(ogrenci.cinsiyet=='e' || ogrenci.cinsiyet=='E')
+         	cout<<"Öğrencinin Cinsiyeti :Erkek"<<endl;
+	
+	        else if(ogrenci.cinsiyet=='k' || ogrenci.cinsiyet== 'K')
+        	cout<<"Öğrencinin Cinsiyeti :Kadın"<<endl;
+			 	
+			 }
+		}
+		
+	}
+	
+	else
+	cout<<"Kayıt Bulunamadı."<<endl;
+	
+		oku.close();
+}
+
+void OgrenciSilme()
+{
+		char secim;
+		bool sil=true;
+			ifstream oku ("ogrenci.dat",ios::binary | ios::app);
+	
+	oku.seekg(0,ios::end);
+	int kayitSayisi=oku.tellg()/sizeof(ogrenci);
+	cout<<"Toplam Kayıt Sayısı :"<<kayitSayisi<<endl;
+	char no[20];
+	cout<<"Aradığınız Öğrencinin Öğrenci Numarasını Giriniz :"<<endl;
+	cin>>no;
+	
+	if(kayitSayisi<0)
+	{
+		for(int i=0;i<kayitSayisi;i++)
+		{
+			oku.seekg(i*sizeof(ogrenci));
+			oku.read((char*)&ogrenci,sizeof(ogrenci));
+			
+			if(strcmp(ogrenci.ogr_no,no))
+			{
+			system("cls");
+					
+		cout<<"Öğrencinin Bilgileri"<<endl;
+			cout<<endl;
+		cout<<"Öğrencinin Adı :"<<ogrenci.ad<<endl;
+		cout<<"Öğrencinin Soyadı :"<<ogrenci.soyad<<endl;
+		cout<<"Öğrencinin Numarası :"<<ogrenci.ogr_no<<endl;
+		if(ogrenci.cinsiyet=='k' || ogrenci.cinsiyet=='K')
+		cout<<"Öğrencinin Cinsiyeti :Kadın"<<endl;
+		else if(ogrenci.cinsiyet=='e' || ogrenci.cinsiyet=='E')
+		{cout<<"Öğrencinin Cinsiyeti :Erkek"<<endl;
+		}
+		
+		cout<<"Silmek İstediğiniz Kayıt Bu Mu?(e/h) :"<<endl;
+		cin>>secim;
+	
+		if (secim=='h' || secim=='H')
+		 {
+			Ogrenci yedek_ogrenci;
+			
+			ofstream yedek_dosya("Yedek.dat",ios::binary | ios::app);
+			strcpy(yedek_ogrenci.ad,ogrenci.ad);
+			strcpy(yedek_ogrenci.soyad,ogrenci.soyad);
+			strcpy(yedek_ogrenci.ogr_no,ogrenci.ogr_no);
+			ogrenci.cinsiyet=yedek_ogrenci.cinsiyet;
+			
+			
+			yedek_dosya.write((char*)&ogrenci,sizeof(ogrenci));
+			yedek_dosya.close();
+		}
+		else {
+		Ogrenci	yedek_ogrenci;
+			ofstream yedek_dosya("Yedek.dat",ios::binary | ios::app);
+			strcpy(yedek_ogrenci.ad,ogrenci.ad);
+			strcpy(yedek_ogrenci.soyad,ogrenci.soyad);
+			strcpy(yedek_ogrenci.ogr_no,ogrenci.ogr_no);
+		ogrenci.cinsiyet=yedek_ogrenci.cinsiyet;
+			
+			
+			yedek_dosya.write((char*)&ogrenci,sizeof(ogrenci));
+			yedek_dosya.close();
+			
+		}
+		if(secim=='E' || secim=='e')
+		{
+			sil=true;
+		}
+		else
+		{
+			Ogrenci	yedek_ogrenci;
+			ofstream yedek_dosya("Yedek.dat",ios::binary | ios::app);
+			strcpy(yedek_ogrenci.ad,ogrenci.ad);
+			strcpy(yedek_ogrenci.soyad,ogrenci.soyad);
+			strcpy(yedek_ogrenci.ogr_no,ogrenci.ogr_no);
+			yedek_ogrenci.cinsiyet=ogrenci.cinsiyet;
+			
+			
+			yedek_dosya.write((char*)&ogrenci,sizeof(ogrenci));
+			yedek_dosya.close();
+		}
+			}
+			if(sil)
+			{
+				remove("ogrenci.dat");
+				rename("yedek.dat","ogrenci.dat");
+				cout<<"Kayıt Başarıyla Silindi."<<endl;
+				
+			}
+			else {
+				remove("yedek.dat");
+				cout<<"Kayıt Bulunamadı."<<endl;
+			}
+		}
+	}
+	
+	else 
+{cout<<"Aradığınız Öğrenci Numarası Geçersiz.."<<endl;
+cout<<endl;
+	}	
+	
+}
+
+
+
+void OgrenciDuzenleme()
+{
+	char ogr_no[10];
+	char secim;
+	bool mevcut=false;
+	
+	ifstream oku ("ogrenci.dat",ios::binary | ios::app);
+	
+	oku.seekg(0,ios::end);
+	int kayitsayisi=oku.tellg()/sizeof(ogrenci);
+	
+	cout<<"Kaydını Düzetmek İstediğiniz Öğrencinin Numarasını Giriniz :"<<endl;
+	cin>>ogr_no;
+	for(int i=0;i<kayitsayisi;i++)
+	{
+		oku.seekg(i*sizeof(ogrenci));
+		oku.read((char*)&ogrenci,sizeof(ogrenci));
+			
+			if(strcmp(ogrenci.ogr_no,ogr_no))
+			{
+			system("cls");
+					
+		cout<<"Öğrencinin Bilgileri"<<endl;
+			cout<<endl;
+		cout<<"Öğrencinin Adı :"<<ogrenci.ad<<endl;
+		cout<<"Öğrencinin Soyadı :"<<ogrenci.soyad<<endl;
+		cout<<"Öğrencinin Numarası :"<<ogrenci.ogr_no<<endl;
+		if(ogrenci.cinsiyet=='k' || ogrenci.cinsiyet=='K')
+		cout<<"Öğrencinin Cinsiyeti :Kadın"<<endl;
+		else if(ogrenci.cinsiyet=='e' || ogrenci.cinsiyet=='E')
+		{cout<<"Öğrencinin Cinsiyeti :Erkek"<<endl;
+		}
+		
+		cout<<"Düzeltmek İstediğiniz Kayıt Bu Mu?(e/h) :"<<endl;
+		cin>>secim;
+	
+		if (secim=='e' || secim=='E')
+		 {
+			mevcut=true;
+			ofstream dosya("yedek.dat",ios::app | ios::binary);
+						system ("cls");
+		cout<<"Öğrencinin Adını Giriniz : "<<endl,
+	    cin>>ogrenci.ad;
+		cout<<"Öğrencinin Soyadını Giriniz :"<<endl;
+		cin>>ogrenci.soyad;
+		cout<<"Öğrencinin Numarasını Giriniz :"<<endl;
+		cin>>ogrenci.ogr_no;
+		cout<<"Öğrencinin Cinsiyetini Giriniz (e/k):"<<endl;
+		cin>>ogrenci.cinsiyet;
+		cout<<endl;
+		dosya.write((char*)&ogrenci,sizeof(ogrenci));
+		dosya.close();
+		}
+		else {
+		Ogrenci	yedek_ogrenci;
+			ofstream yedek_dosya;
+			yedek_dosya.open("Yedek.dat",ios::binary | ios::app);
+			strcpy(yedek_ogrenci.ad,ogrenci.ad);
+			strcpy(yedek_ogrenci.soyad,ogrenci.soyad);
+			strcpy(yedek_ogrenci.ogr_no,ogrenci.ogr_no);
+		ogrenci.cinsiyet=yedek_ogrenci.cinsiyet;
+			
+			
+			yedek_dosya.write((char*)&ogrenci,sizeof(ogrenci));
+			yedek_dosya.close();
+			
+		}
+		oku.close();
+		if(mevcut)
+		{
+		remove("ogrenci.dat");
+		rename("yedek.dat","ogrenci.dat");
+		cout<<"Katıt Başarıyla Düzeltildi."<<endl;
+		
+		}
+		else
+		{
+		remove("yedek.dat");
+		cout<<"Kayıt Bulunamadı.."<<endl;
+		}
+			}
+		}
+	}
+
